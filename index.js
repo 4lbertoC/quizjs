@@ -120,6 +120,6 @@ app.use(function(req, res, next) {
 });
 
 module.exports = function(port) {
-	server.listen(port || DEFAULT_PORT);
+	server.listen(port || process.env.PORT || DEFAULT_PORT);
 	console.log('QuizJs – Server started!');
 };
