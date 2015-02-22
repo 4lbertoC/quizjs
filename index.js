@@ -122,6 +122,7 @@ app.use(function(req, res, next) {
 app.set('port', (process.env.PORT || DEFAULT_PORT))
 
 module.exports = function() {
-	server.listen(app.get('port'));
-	console.log('QuizJs – Server started!');
+	var port = app.get('port');
+	server.listen(port);
+	console.log('QuizJs – Server started on port ' + port);
 };
