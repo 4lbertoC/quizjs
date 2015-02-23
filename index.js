@@ -45,7 +45,7 @@ var EVENT = {
 
 var DEFAULT_PORT = 2450;
 
-var registeredIds = 0;
+var registeredIds = 1;
 var clientQueue = [];
 
 function registerClientActions(socket) {
