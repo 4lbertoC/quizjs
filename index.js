@@ -1,3 +1,9 @@
+/**
+ * QuizJs
+ *
+ * @4lbertoC
+ */
+
 'use strict';
 
 var express = require('express');
@@ -6,7 +12,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 /*
- * Events received by the clients.
+ * Actions sent by the clients and master.
  */
 var ACTION = {
 	CLIENT: {
@@ -16,7 +22,7 @@ var ACTION = {
 		SUBSCRIBE: 'quizjs-client-subscribe'
 	},
 	MASTER: {
-		// Triggered when a master connects
+		// Triggered when the master connects
 		CONNECT: 'quizjs-master-connect',
 		// Triggered when the master resets the state
 		RESET: 'quizjs-master-reset',
@@ -46,6 +52,7 @@ var EVENT = {
 var DEFAULT_PORT = 2450;
 
 var registeredIds = 1;
+
 var clientQueue = [];
 
 function registerClientActions(socket) {
