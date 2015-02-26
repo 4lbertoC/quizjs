@@ -52,7 +52,7 @@ describe('quizjs-server node module', function() {
             var player = qjs.registerPlayer();
             var isCallbackCalled = false;
 
-            qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
+            qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function() {
                 isCallbackCalled = true;
             });
 
@@ -67,7 +67,7 @@ describe('quizjs-server node module', function() {
         it('gives the next player in the queue the possibility to answer', function() {
             var qjs = new QuizJsServer();
             var player1 = qjs.registerPlayer(); // player 1
-            var player2 = qjs.registerPlayer() // player 2
+            var player2 = qjs.registerPlayer(); // player 2
             var speakerId;
 
             qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
@@ -98,7 +98,7 @@ describe('quizjs-server node module', function() {
             var qjs = new QuizJsServer();
             var isCallbackCalled = false;
 
-            qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
+            qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function() {
                 isCallbackCalled = true;
             });
 
@@ -132,7 +132,7 @@ describe('quizjs-server node module', function() {
             var qjs = new QuizJsServer();
             var isCallbackCalled = false;
 
-            qjs.on(QuizJsServer.EVENT.STATE.RESET, function(data) {
+            qjs.on(QuizJsServer.EVENT.STATE.RESET, function() {
                 isCallbackCalled = true;
             });
 

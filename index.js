@@ -56,11 +56,9 @@ QuizJsServer.prototype._updateState = function() {
 
 QuizJsServer.prototype._registeredIds = 1;
 
-QuizJsServer.prototype._playerQueue;
-
 QuizJsServer.prototype._emitter = new events.EventEmitter();
 
-QuizJsServer.prototype.on = function(eventId, callback) {
+QuizJsServer.prototype.on = function() {
     this._emitter.on.apply(this._emitter, arguments);
 };
 

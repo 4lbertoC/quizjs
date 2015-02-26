@@ -34,8 +34,5 @@
   "scripts": {
     "test": "grunt"
   },
-  "bin": {
-    "quizjs-server": "cli.js"
-  },
   "private": true
 }
