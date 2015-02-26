@@ -19,8 +19,8 @@ function registerPlayerActions(socket) {
 }
 
 function registerMasterActions(socket) {
-	socket.on(QuizJsServer.ACTION.MASTER.RESET, qjs.resetState);
-	socket.on(QuizJsServer.ACTION.MASTER.NEXT, qjs.nextSubscriber);
+	socket.on(QuizJsServer.ACTION.MASTER.RESET, qjs.resetState.bind(qjs));
+	socket.on(QuizJsServer.ACTION.MASTER.NEXT, qjs.nextSubscriber.bind(qjs));
 }
 
 io.sockets.on('connection', function(socket) {
@@ -46,7 +46,11 @@ io.sockets.on('connection', function(socket) {
 });
 
 qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
-	console.log('QuizJs – Update: ' + data.speakerId + ' can answer');
+	if(!data.speakerId) {
+		console.log('QuizJs - Update: queue is empty!');
+	} else {
+		console.log('QuizJs – Update: ' + data.speakerId + ' can answer');	
+	}
 	io.sockets.emit(QuizJsServer.EVENT.STATE.UPDATE, data);
 });
 

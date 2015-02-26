@@ -1,98 +1,69 @@
-(function(window, undefined) {
+var CONST = require('../constants');
+var io = require('socket.io-client');
 
-	/*
-	 * Actions sent by the master.
-	 */
-	var ACTION = {
-		MASTER: {
-			// Triggered when a master connects
-			CONNECT: 'quizjs-master-connect',
-			// Triggered when the master resets the state
-			RESET: 'quizjs-master-reset',
-			// Triggered when a client's answer was wrong and the master lets the next person answer
-			NEXT: 'quizjs-master-next'
-		}
-	};
+var QuizJsMaster = function() {
+	this._eventHandlers = {};
+};
 
-	/**
-	 * Events sent by the server.
-	 */
-	var EVENT = {
-		MASTER: {
-			// Triggered when the master is registered to the server
-			REGISTER: 'quizjs-master-register'
-		},
-		STATE: {
-			RESET: 'quizjs-state-reset',
-			UPDATE: 'quizjs-state-update'
-		}
-	};
+QuizJsMaster.prototype.connect = function(url) {
+	var self = this;
+	var socket = this._socket = io(url);
 
-	var socket;
+	socket.on('connect', function() {
+		socket.emit(CONST.ACTION.MASTER.CONNECT);
+	});
 
-	var connected = false;
+	socket.on(CONST.EVENT.MASTER.REGISTER, function(data) {
+		self._connected = true;
+		self._callEventHandlers(CONST.EVENT.MASTER.REGISTER, data);
+	});
 
-	var eventHandlers = {};
+	socket.on(CONST.EVENT.STATE.UPDATE, function(data) {
+		self._callEventHandlers(CONST.EVENT.STATE.UPDATE, data);
+	});
 
-	function _callEventHandlers(eventId, data) {
-		var currentEventHandlers = eventHandlers[eventId];
-		if (Array.isArray(currentEventHandlers)) {
-			for (var i = 0, len = currentEventHandlers.length; i < len; i++) {
-				currentEventHandlers[i](data);
-			}
-		}
+	socket.on(CONST.EVENT.STATE.RESET, function(data) {
+		self._callEventHandlers(CONST.EVENT.STATE.RESET, data);
+	});
+};
+
+QuizJsMaster.prototype.next = function() {
+	if (this._connected) {
+		this._socket.emit(CONST.ACTION.MASTER.NEXT);
+	} else {
+		console.error('Master not connected!');
+	}
+};
+
+QuizJsMaster.prototype.on = function(eventId, handler) {
+	if (!this._eventHandlers[eventId]) {
+		this._eventHandlers[eventId] = [];
 	}
 
-	function on(eventId, handler) {
-		if (!eventHandlers[eventId]) {
-			eventHandlers[eventId] = [];
-		}
+	this._eventHandlers[eventId].push(handler);
+};
 
-		eventHandlers[eventId].push(handler);
-	} 
-
-	function connect(url) {
-		socket = io(url);
-
-		socket.on('connect', function() {
-			socket.emit(ACTION.MASTER.CONNECT);
-		});
-
-		socket.on(EVENT.MASTER.REGISTER, function(data) {
-			connected = true;
-			_callEventHandlers(EVENT.MASTER.REGISTER, data);
-		});
-
-		socket.on(EVENT.STATE.UPDATE, function(data) {
-			_callEventHandlers(EVENT.STATE.UPDATE, data);
-		});
-
-		socket.on(EVENT.STATE.RESET, function(data) {
-			_callEventHandlers(EVENT.STATE.RESET, data);
-		});
+QuizJsMaster.prototype.reset = function() {
+	if (this._connected) {
+		this._socket.emit(CONST.ACTION.MASTER.RESET);
+	} else {
+		console.error('Master not connected!');
 	}
+};
 
-	function next() {
-		if (connected) {
-			socket.emit(ACTION.MASTER.NEXT);
-		} else {
-			console.error('Master not connected!');
+QuizJsMaster.prototype._callEventHandlers = function(eventId, data) {
+	var currentEventHandlers = this._eventHandlers[eventId];
+	if (Array.isArray(currentEventHandlers)) {
+		for (var i = 0, len = currentEventHandlers.length; i < len; i++) {
+			currentEventHandlers[i](data);
 		}
 	}
+};
 
-	function reset() {
-		if (connected) {
-			socket.emit(ACTION.MASTER.RESET);
-		} else {
-			console.error('Master not connected!');
-		}
-	}
+QuizJsMaster.prototype._eventHandlers = null;
 
-	var QuizJsMaster = window.QuizJsMaster = {
-		connect: connect,
-		next: next,
-		reset: reset,
-		on: on
-	};
+QuizJsMaster.prototype._connected = false;
 
-})(this);
+QuizJsMaster.prototype._socket = null;
+
+module.exports = QuizJsMaster;

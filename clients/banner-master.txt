@@ -1,0 +1,8 @@
+/*!
+* QuizJs Master Client
+*
+* Copyright (c) Alberto Congiu
+* @4lbertoC
+*
+* Released under the MIT license.
+*/

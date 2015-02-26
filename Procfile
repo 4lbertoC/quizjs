@@ -1,1 +1,1 @@
-web: node cli
+web: node implementations/quizjs-socket.io.js

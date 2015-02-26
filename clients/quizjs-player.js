@@ -1,92 +1,66 @@
-(function(window, undefined) {
+var CONST = require('../constants');
+var io = require('socket.io-client');
 
-	/*
-	 * Actions sent by the players.
-	 */
-	var ACTION = {
-		PLAYER: {
-			// Triggered when a player connects
-			CONNECT: 'quizjs-player-connect',
-			// Triggered when a player subscribes to a question
-			SUBSCRIBE: 'quizjs-player-subscribe'
-		}
-	};
+var QuizJsPlayer = function() {
+	this._eventHandlers = {};
+};
 
-	/**
-	 * Events sent by the server.
-	 */
-	var EVENT = {
-		PLAYER: {
-			// Triggered when a player is registered to the server
-			REGISTER: 'quizjs-player-register'
-		},
-		STATE: {
-			RESET: 'quizjs-state-reset',
-			UPDATE: 'quizjs-state-update'
-		}
-	};
-
-	var socket;
-
-	var connected = false;
-
-	var eventHandlers = {};
-
-	var playerId;
-
-	function _callEventHandlers(eventId, data) {
-		var currentEventHandlers = eventHandlers[eventId];
-		if (Array.isArray(currentEventHandlers)) {
-			for (var i = 0, len = currentEventHandlers.length; i < len; i++) {
-				currentEventHandlers[i](data);
-			}
-		}
+QuizJsPlayer.prototype.on = function(eventId, handler) {
+	if (!this._eventHandlers[eventId]) {
+		this._eventHandlers[eventId] = [];
 	}
 
-	function on(eventId, handler) {
-		if (!eventHandlers[eventId]) {
-			eventHandlers[eventId] = [];
-		}
+	this._eventHandlers[eventId].push(handler);
+};
 
-		eventHandlers[eventId].push(handler);
-	} 
+QuizJsPlayer.prototype.connect = function(url) {
+	var self = this;
+	var socket = this._socket = io(url);
 
-	function connect(url) {
-		socket = io(url);
+	socket.on('connect', function() {
+		socket.emit(CONST.ACTION.PLAYER.CONNECT);
+	});
 
-		socket.on('connect', function() {
-			socket.emit(ACTION.PLAYER.CONNECT);
+	socket.on(CONST.EVENT.PLAYER.REGISTER, function(data) {
+		self._connected = true;
+		self._playerId = data.playerId;
+		self._callEventHandlers(CONST.EVENT.PLAYER.REGISTER, data);
+	});
+
+	socket.on(CONST.EVENT.STATE.UPDATE, function(data) {
+		self._callEventHandlers(CONST.EVENT.STATE.UPDATE, data);
+	});
+
+	socket.on(CONST.EVENT.STATE.RESET, function(data) {
+		self._callEventHandlers(CONST.EVENT.STATE.RESET, data);
+	});
+};
+
+QuizJsPlayer.prototype.subscribe = function() {
+	if (this._connected) {
+		this._socket.emit(CONST.ACTION.PLAYER.SUBSCRIBE, {
+			playerId: this._playerId
 		});
-
-		socket.on(EVENT.PLAYER.REGISTER, function(data) {
-			connected = true;
-			playerId = data.playerId;
-			_callEventHandlers(EVENT.PLAYER.REGISTER, data);
-		});
-
-		socket.on(EVENT.STATE.UPDATE, function(data) {
-			_callEventHandlers(EVENT.STATE.UPDATE, data);
-		});
-
-		socket.on(EVENT.STATE.RESET, function(data) {
-			_callEventHandlers(EVENT.STATE.RESET, data);
-		});
+	} else {
+		console.error('Player not connected!');
 	}
+};
 
-	function subscribe() {
-		if (connected) {
-			socket.emit(ACTION.PLAYER.SUBSCRIBE, {
-				playerId: playerId
-			});
-		} else {
-			console.error('Player not connected!');
+QuizJsPlayer.prototype._callEventHandlers = function(eventId, data) {
+	var currentEventHandlers = this._eventHandlers[eventId];
+	if (Array.isArray(currentEventHandlers)) {
+		for (var i = 0, len = currentEventHandlers.length; i < len; i++) {
+			currentEventHandlers[i](data);
 		}
 	}
+};
 
-	var QuizJsPlayer = window.QuizJsPlayer = {
-		connect: connect,
-		subscribe: subscribe,
-		on: on
-	};
+QuizJsPlayer.prototype._socket = null;
 
-})(this);
+QuizJsPlayer.prototype._connected = false;
+
+QuizJsPlayer.prototype._eventHandlers = null;
+
+QuizJsPlayer.prototype._playerId = undefined;
+
+module.exports = QuizJsPlayer;

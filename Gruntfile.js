@@ -1,11 +1,35 @@
 'use strict';
-module.exports = function (grunt) {
+module.exports = function(grunt) {
   // Show elapsed time at the end
   require('time-grunt')(grunt);
   // Load all grunt tasks
   require('load-grunt-tasks')(grunt);
 
   grunt.initConfig({
+    browserify: {
+      master: {
+        files: {
+          'build/quizjs-master.js': ['clients/quizjs-master.js']
+        },
+        options: {
+          banner: grunt.file.read('./clients/banner-master.txt'),
+          browserifyOptions: {
+            standalone: 'QuizJsMaster'
+          }
+        }
+      },
+      player: {
+        files: {
+          'build/quizjs-player.js': ['clients/quizjs-player.js']
+        },
+        options: {
+          banner: grunt.file.read('./clients/banner-player.txt'),
+          browserifyOptions: {
+            standalone: 'QuizJsPlayer'
+          }
+        }
+      }
+    },
     jshint: {
       options: {
         jshintrc: '.jshintrc',
@@ -15,7 +39,7 @@ module.exports = function (grunt) {
         src: ['Gruntfile.js']
       },
       js: {
-        src: ['*.js']
+        src: ['*.js', 'clients/*.js']
       },
       test: {
         src: ['test/**/*.js']
@@ -27,6 +51,17 @@ module.exports = function (grunt) {
         bail: true
       },
       all: ['test/*.js']
+    },
+    uglify: {
+      clients: {
+        files: {
+          'build/quizjs-master.min.js': 'build/quizjs-master.js',
+          'build/quizjs-player.min.js': 'build/quizjs-player.js'
+        },
+        options: {
+          preserveComments: 'some'
+        }
+      }
     },
     watch: {
       gruntfile: {
@@ -44,5 +79,5 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['jshint', 'mochacli']);
+  grunt.registerTask('default', ['jshint', 'mochacli', 'browserify', 'uglify']);
 };

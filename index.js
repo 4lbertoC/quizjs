@@ -1,4 +1,4 @@
-/**
+/*!
  * QuizJs Server
  *
  * Copyright (c) Alberto Congiu
@@ -55,6 +55,8 @@ QuizJsServer.prototype._updateState = function() {
 };
 
 QuizJsServer.prototype._registeredIds = 1;
+
+QuizJsServer.prototype._playerQueue = null;
 
 QuizJsServer.prototype._emitter = new events.EventEmitter();
 
