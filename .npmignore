@@ -1,0 +1,7 @@
+/.jshintrc
+/.yo-rc.json
+
+/.travis.yml
+
+/test
+/Gruntfile.js

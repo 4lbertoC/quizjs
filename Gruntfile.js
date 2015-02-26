@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     browserify: {
       master: {
         files: {
-          'build/quizjs-master.js': ['clients/quizjs-master.js']
+          'dist/quizjs-master.js': ['clients/quizjs-master.js']
         },
         options: {
           banner: grunt.file.read('./clients/banner-master.txt'),
@@ -20,7 +20,7 @@ module.exports = function(grunt) {
       },
       player: {
         files: {
-          'build/quizjs-player.js': ['clients/quizjs-player.js']
+          'dist/quizjs-player.js': ['clients/quizjs-player.js']
         },
         options: {
           banner: grunt.file.read('./clients/banner-player.txt'),
@@ -55,8 +55,8 @@ module.exports = function(grunt) {
     uglify: {
       clients: {
         files: {
-          'build/quizjs-master.min.js': 'build/quizjs-master.js',
-          'build/quizjs-player.min.js': 'build/quizjs-player.js'
+          'dist/quizjs-master.min.js': 'dist/quizjs-master.js',
+          'dist/quizjs-player.min.js': 'dist/quizjs-player.js'
         },
         options: {
           preserveComments: 'some'
