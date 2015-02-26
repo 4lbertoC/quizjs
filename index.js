@@ -1,126 +1,71 @@
 /**
- * QuizJs
+ * QuizJs Server
  *
+ * Copyright (c) Alberto Congiu
  * @4lbertoC
+ *
+ * Released under the MIT license.
  */
 
 'use strict';
 
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
+var emitter = require('event-emitter')({});
 
-/*
- * Actions sent by the clients and master.
- */
-var ACTION = {
-	CLIENT: {
-		// Triggered when a client connects
-		CONNECT: 'quizjs-client-connect',
-		// Triggered when a client subscribes to a question
-		SUBSCRIBE: 'quizjs-client-subscribe'
-	},
-	MASTER: {
-		// Triggered when the master connects
-		CONNECT: 'quizjs-master-connect',
-		// Triggered when the master resets the state
-		RESET: 'quizjs-master-reset',
-		// Triggered when a client's answer was wrong and the master lets the next person answer
-		NEXT: 'quizjs-master-next'
-	}
-};
-
-/**
- * Events sent by the server.
- */
-var EVENT = {
-	CLIENT: {
-		// Triggered when a client is registered to the server
-		REGISTER: 'quizjs-client-register'
-	},
-	MASTER: {
-		// Triggered when a client is registered to the server
-		REGISTER: 'quizjs-master-register'
-	},
-	STATE: {
-		RESET: 'quizjs-state-reset',
-		UPDATE: 'quizjs-state-update'
-	}
-};
-
-var DEFAULT_PORT = 2450;
-
-var registeredIds = 1;
+var CONST = require('./constants');
 
 var clientQueue = [];
 
-function registerClientActions(socket) {
-	socket.on(ACTION.CLIENT.SUBSCRIBE, function(data) {
-		var newSubscriptionId = data.clientId;
+var registeredIds = 1;
 
-		if (clientQueue.indexOf(newSubscriptionId) === -1) {
-			console.log('QuizJs – Client ' + newSubscriptionId + ' subscribed');
-			clientQueue.push(newSubscriptionId);
-			updateState();
-		}
-	});
-}
-
-function registerMasterActions(socket) {
-	socket.on(ACTION.MASTER.RESET, function(data) {
-		resetState();
-	});
-
-	socket.on(ACTION.MASTER.NEXT, function(data) {
-		clientQueue.shift();
-		updateState();
-	});
-}
-
-function resetState() {
-	clientQueue.length = 0;
-
-	console.log('QuizJs – Reset');
-	io.sockets.emit(EVENT.STATE.RESET, {});
-}
-
-function updateState() {
+function _updateState() {
 	// Can also be undefined
 	var speakerId = clientQueue[0];
 	var data = {
 		speakerId: speakerId
 	};
 
-	console.log('QuizJs – Update: ' + speakerId + ' can answer');
-	io.sockets.emit(EVENT.STATE.UPDATE, data);
+	emitter.emit(CONST.EVENT.STATE.UPDATE, data);
 }
 
-io.sockets.on('connection', function(socket) {
-
-	socket.on(ACTION.CLIENT.CONNECT, function() {
-		registerClientActions(socket);
-
-		var clientId = registeredIds++;
-		console.log('QuizJs – Client ' + clientId + ' connected');
-		socket.emit(EVENT.CLIENT.REGISTER, {
-			clientId: clientId
-		});
-	});
-
-	socket.on(ACTION.MASTER.CONNECT, function() {
-		registerMasterActions(socket);
-
-		console.log('QuizJs – Master connected');
-		socket.emit(EVENT.MASTER.REGISTER, {});
-	});
-
-});
-
-app.set('port', (process.env.PORT || DEFAULT_PORT))
-
 module.exports = function() {
-	var port = app.get('port');
-	server.listen(port);
-	console.log('QuizJs – Server started on port ' + port);
+
+	return {
+		// Constants
+		ACTION: CONST.ACTION,
+		EVENT: CONST.EVENT,
+
+		// QuizJs methods
+		resetState: function() {
+			clientQueue.length = 0;
+			emitter.emit(CONST.EVENT.STATE.RESET, {});
+		},
+
+		nextSubscriber: function() {
+			clientQueue.shift();
+			_updateState();
+		},
+
+		registerNewClient: function() {
+			var clientId = registeredIds++;
+
+			emitter.emit(CONST.EVENT.CLIENT.REGISTER, {
+				clientId: clientId
+			});
+
+			return clientId;
+		},
+
+		subscribe: function(clientId) {
+			if (clientQueue.indexOf(clientId) === -1) {
+				clientQueue.push(clientId);
+				_updateState();
+			}
+		},
+
+		// event-emitter methods
+		on: emitter.on.bind(emitter),
+		off: emitter.off.bind(emitter),
+		once: emitter.once.bind(emitter)
+	};
+
 };
