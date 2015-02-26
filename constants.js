@@ -1,22 +1,22 @@
 module.exports = {
 
 	/*
-	 * Actions sent by the clients and master.
+	 * Actions sent by players and master.
 	 */
 	ACTION: {
-		CLIENT: {
-			// Triggered when a client connects
-			CONNECT: 'quizjs-client-connect',
-			// Triggered when a client subscribes to a question
-			SUBSCRIBE: 'quizjs-client-subscribe'
-		},
 		MASTER: {
 			// Triggered when the master connects
 			CONNECT: 'quizjs-master-connect',
-			// Triggered when the master resets the state
+			// Triggered when the state is reset
 			RESET: 'quizjs-master-reset',
-			// Triggered when a client's answer was wrong and the master lets the next person answer
+			// Triggered when it's another player's turn to answer
 			NEXT: 'quizjs-master-next'
+		},
+		PLAYER: {
+			// Triggered when a player connects
+			CONNECT: 'quizjs-player-connect',
+			// Triggered when a player subscribes to a question
+			SUBSCRIBE: 'quizjs-player-subscribe'
 		}
 	},
 
@@ -24,13 +24,13 @@ module.exports = {
 	 * Events sent by the server.
 	 */
 	EVENT: {
-		CLIENT: {
-			// Triggered when a client is registered to the server
-			REGISTER: 'quizjs-client-register'
-		},
 		MASTER: {
-			// Triggered when a client is registered to the server
+			// Triggered when the master is registered to the server
 			REGISTER: 'quizjs-master-register'
+		},
+		PLAYER: {
+			// Triggered when a player is registered to the server
+			REGISTER: 'quizjs-player-register'
 		},
 		STATE: {
 			RESET: 'quizjs-state-reset',

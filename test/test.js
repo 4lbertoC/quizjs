@@ -5,58 +5,58 @@ var QuizJsServer = require('../');
 
 describe('quizjs-server node module', function() {
 
-    describe('.registerClient()', function() {
+    describe('.registerPlayer()', function() {
 
-        it('registers a new client and returns its id', function() {
+        it('registers a new player and returns its id', function() {
             var qjs = new QuizJsServer();
-            var clientId = qjs.registerClient();
+            var playerId = qjs.registerPlayer();
 
-            assert(typeof clientId !== 'undefined');
+            assert(typeof playerId !== 'undefined');
         });
 
         it('emits an event to its listeners', function() {
             var qjs = new QuizJsServer();
-            var clientId;
-            var eventClientId;
+            var playerId;
+            var eventPlayerId;
             var isCallbackCalled = false;
 
-            qjs.on(QuizJsServer.EVENT.CLIENT.REGISTER, function(data) {
-                eventClientId = data.clientId;
+            qjs.on(QuizJsServer.EVENT.PLAYER.REGISTER, function(data) {
+                eventPlayerId = data.playerId;
                 isCallbackCalled = true;
             });
 
-            clientId = qjs.registerClient();
-            assert(isCallbackCalled, 'The client registration callback has not been called');
-            assert(eventClientId === clientId, 'The registered client\'s id is not included in the event data');
+            playerId = qjs.registerPlayer();
+            assert(isCallbackCalled, 'The player registration callback has not been called');
+            assert(eventPlayerId === playerId, 'The registered player\'s id is not included in the event data');
         });
 
     });
 
-    describe('.subscribe(clientId)', function() {
+    describe('.subscribe(playerId)', function() {
 
-        it('adds a client to the subscribers queue', function() {
+        it('adds a player to the subscribers queue', function() {
             var qjs = new QuizJsServer();
-            var client = qjs.registerClient();
+            var player = qjs.registerPlayer();
             var speakerId;
 
             qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
                 speakerId = data.speakerId;
             });
 
-            qjs.subscribe(client);
-            assert(speakerId === client, 'The subscribed client is not registered');
+            qjs.subscribe(player);
+            assert(speakerId === player, 'The subscribed player is not registered');
         });
 
         it('emits a state update event', function() {
             var qjs = new QuizJsServer();
-            var client = qjs.registerClient();
+            var player = qjs.registerPlayer();
             var isCallbackCalled = false;
 
             qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
                 isCallbackCalled = true;
             });
 
-            qjs.subscribe(client);
+            qjs.subscribe(player);
             assert(isCallbackCalled, 'The state update callback has not been called');
         });
 
@@ -64,21 +64,21 @@ describe('quizjs-server node module', function() {
 
     describe('.nextSubscriber()', function() {
 
-        it('gives the next client in the queue the possibility to answer', function() {
+        it('gives the next player in the queue the possibility to answer', function() {
             var qjs = new QuizJsServer();
-            var client1 = qjs.registerClient(); // client 1
-            var client2 = qjs.registerClient() // client 2
+            var player1 = qjs.registerPlayer(); // player 1
+            var player2 = qjs.registerPlayer() // player 2
             var speakerId;
 
             qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
                 speakerId = data.speakerId;
             });
 
-            qjs.subscribe(client1); // queue = [1]
-            qjs.subscribe(client2); // queue = [1, 2]
+            qjs.subscribe(player1); // queue = [1]
+            qjs.subscribe(player2); // queue = [1, 2]
             qjs.nextSubscriber(); // queue = [2]
 
-            assert(speakerId === client2, 'The last subscriber should be the one who can speak');
+            assert(speakerId === player2, 'The last subscriber should be the one who can speak');
         });
 
         it('returns undefined if there are no subscribers', function() {
@@ -115,10 +115,10 @@ describe('quizjs-server node module', function() {
             var qjs = new QuizJsServer();
             var speakerId;
 
-            // Register some clients
-            qjs.registerClient();
-            qjs.registerClient();
-            qjs.registerClient();
+            // Register some players
+            qjs.registerPlayer();
+            qjs.registerPlayer();
+            qjs.registerPlayer();
             qjs.resetState();
 
             qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {

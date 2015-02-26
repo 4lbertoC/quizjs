@@ -11,10 +11,10 @@ var qjs = new QuizJsServer();
 
 var DEFAULT_PORT = 2450;
 
-function registerClientActions(socket) {
-	socket.on(QuizJsServer.ACTION.CLIENT.SUBSCRIBE, function(data) {
-		console.log('QuizJs – Client ' + data.clientId + ' subscribed');
-		qjs.subscribe(data.clientId);
+function registerPlayerActions(socket) {
+	socket.on(QuizJsServer.ACTION.PLAYER.SUBSCRIBE, function(data) {
+		console.log('QuizJs – Player ' + data.playerId + ' subscribed');
+		qjs.subscribe(data.playerId);
 	});
 }
 
@@ -25,14 +25,14 @@ function registerMasterActions(socket) {
 
 io.sockets.on('connection', function(socket) {
 
-	socket.on(QuizJsServer.ACTION.CLIENT.CONNECT, function() {
-		registerClientActions(socket);
+	socket.on(QuizJsServer.ACTION.PLAYER.CONNECT, function() {
+		registerPlayerActions(socket);
 
-		var clientId = qjs.registerClient();
+		var playerId = qjs.registerPlayer();
 		
-		console.log('QuizJs – Client ' + clientId + ' connected');
-		socket.emit(QuizJsServer.EVENT.CLIENT.REGISTER, {
-			clientId: clientId
+		console.log('QuizJs – Player ' + playerId + ' connected');
+		socket.emit(QuizJsServer.EVENT.PLAYER.REGISTER, {
+			playerId: playerId
 		});
 	});
 

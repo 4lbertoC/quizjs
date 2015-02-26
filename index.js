@@ -14,39 +14,39 @@ var events = require('events');
 var CONST = require('./constants');
 
 var QuizJsServer = function() {
-    this._clientQueue = [];
+    this._playerQueue = [];
 };
 
 QuizJsServer.prototype.nextSubscriber = function() {
-    this._clientQueue.shift();
+    this._playerQueue.shift();
     this._updateState();
 };
 
-QuizJsServer.prototype.registerClient = function() {
-    var clientId = this._registeredIds++;
+QuizJsServer.prototype.registerPlayer = function() {
+    var playerId = this._registeredIds++;
 
-    this._emitter.emit(CONST.EVENT.CLIENT.REGISTER, {
-        clientId: clientId
+    this._emitter.emit(CONST.EVENT.PLAYER.REGISTER, {
+        playerId: playerId
     });
 
-    return clientId;
+    return playerId;
 };
 
 QuizJsServer.prototype.resetState = function() {
-    this._clientQueue.length = 0;
+    this._playerQueue.length = 0;
     this._emitter.emit(CONST.EVENT.STATE.RESET, {});
 };
 
-QuizJsServer.prototype.subscribe = function(clientId) {
-    if (this._clientQueue.indexOf(clientId) === -1) {
-        this._clientQueue.push(clientId);
+QuizJsServer.prototype.subscribe = function(playerId) {
+    if (this._playerQueue.indexOf(playerId) === -1) {
+        this._playerQueue.push(playerId);
         this._updateState();
     }
 };
 
 QuizJsServer.prototype._updateState = function() {
     // Can also be undefined
-    var speakerId = this._clientQueue[0];
+    var speakerId = this._playerQueue[0];
     var data = {
         speakerId: speakerId
     };
@@ -56,7 +56,7 @@ QuizJsServer.prototype._updateState = function() {
 
 QuizJsServer.prototype._registeredIds = 1;
 
-QuizJsServer.prototype._clientQueue;
+QuizJsServer.prototype._playerQueue;
 
 QuizJsServer.prototype._emitter = new events.EventEmitter();
 
