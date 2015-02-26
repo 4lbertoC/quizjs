@@ -5,22 +5,22 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-var QuizJsServer = require('../')({
-	verbose: true
-});
+var QuizJsServer = require('../');
+
+var qjs = new QuizJsServer();
 
 var DEFAULT_PORT = 2450;
 
 function registerClientActions(socket) {
 	socket.on(QuizJsServer.ACTION.CLIENT.SUBSCRIBE, function(data) {
 		console.log('QuizJs – Client ' + data.clientId + ' subscribed');
-		QuizJsServer.subscribe(data.clientId);
+		qjs.subscribe(data.clientId);
 	});
 }
 
 function registerMasterActions(socket) {
-	socket.on(QuizJsServer.ACTION.MASTER.RESET, QuizJsServer.resetState);
-	socket.on(QuizJsServer.ACTION.MASTER.NEXT, QuizJsServer.nextSubscriber);
+	socket.on(QuizJsServer.ACTION.MASTER.RESET, qjs.resetState);
+	socket.on(QuizJsServer.ACTION.MASTER.NEXT, qjs.nextSubscriber);
 }
 
 io.sockets.on('connection', function(socket) {
@@ -28,7 +28,7 @@ io.sockets.on('connection', function(socket) {
 	socket.on(QuizJsServer.ACTION.CLIENT.CONNECT, function() {
 		registerClientActions(socket);
 
-		var clientId = QuizJsServer.registerNewClient();
+		var clientId = qjs.registerClient();
 		
 		console.log('QuizJs – Client ' + clientId + ' connected');
 		socket.emit(QuizJsServer.EVENT.CLIENT.REGISTER, {
@@ -45,12 +45,12 @@ io.sockets.on('connection', function(socket) {
 
 });
 
-QuizJsServer.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
+qjs.on(QuizJsServer.EVENT.STATE.UPDATE, function(data) {
 	console.log('QuizJs – Update: ' + data.speakerId + ' can answer');
 	io.sockets.emit(QuizJsServer.EVENT.STATE.UPDATE, data);
 });
 
-QuizJsServer.on(QuizJsServer.EVENT.STATE.RESET, function(data) {
+qjs.on(QuizJsServer.EVENT.STATE.RESET, function(data) {
 	console.log('QuizJs – Reset');
 	io.sockets.emit(QuizJsServer.EVENT.STATE.RESET, data);
 });
