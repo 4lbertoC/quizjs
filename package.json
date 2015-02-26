@@ -1,7 +1,7 @@
 {
   "name": "quizjs-server",
   "version": "0.0.0",
-  "description": "A server for QuizJs",
+  "description": "A node-based platform for live quiz shows",
   "author": {
     "name": "Alberto Congiu",
     "email": "4lbertoc@gmail.com",
