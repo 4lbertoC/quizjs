@@ -24,7 +24,7 @@ $ npm install --save quizjs
 The package contains a basic socket.io server that can be run with:
 
 ```sh
-node implementations/socket.io/quizjs-socket.io.js
+$ node implementations/socket.io/quizjs-socket.io.js
 ```
 
 The socket.io player and master clients are built into the `dist` directory by running the following code in the command line:
