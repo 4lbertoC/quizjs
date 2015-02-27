@@ -23,7 +23,7 @@ $ npm install --save quizjs
 
 The package contains a basic socket.io server that can be run with:
 
-```js
+```sh
 node implementations/socket.io/quizjs-socket.io.js
 ```
 
