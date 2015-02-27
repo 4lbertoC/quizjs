@@ -9,10 +9,10 @@ module.exports = function(grunt) {
     browserify: {
       master: {
         files: {
-          'dist/quizjs-master.js': ['clients/quizjs-master.js']
+          'dist/implementations/socket.io/clients/quizjs-master.js': ['implementations/socket.io/clients/quizjs-master.js']
         },
         options: {
-          banner: grunt.file.read('./clients/banner-master.txt'),
+          banner: grunt.file.read('./implementations/socket.io/clients/banner-master.txt'),
           browserifyOptions: {
             standalone: 'QuizJsMaster'
           }
@@ -20,16 +20,17 @@ module.exports = function(grunt) {
       },
       player: {
         files: {
-          'dist/quizjs-player.js': ['clients/quizjs-player.js']
+          'dist/implementations/socket.io/clients/quizjs-player.js': ['implementations/socket.io/clients/quizjs-player.js']
         },
         options: {
-          banner: grunt.file.read('./clients/banner-player.txt'),
+          banner: grunt.file.read('./implementations/socket.io/clients/banner-player.txt'),
           browserifyOptions: {
             standalone: 'QuizJsPlayer'
           }
         }
       }
     },
+    clean: ['./dist'],
     jshint: {
       options: {
         jshintrc: '.jshintrc',
@@ -55,8 +56,8 @@ module.exports = function(grunt) {
     uglify: {
       clients: {
         files: {
-          'dist/quizjs-master.min.js': 'dist/quizjs-master.js',
-          'dist/quizjs-player.min.js': 'dist/quizjs-player.js'
+          'dist/implementations/socket.io/clients/quizjs-master.min.js': 'dist/implementations/socket.io/clients/quizjs-master.js',
+          'dist/implementations/socket.io/clients/quizjs-player.min.js': 'dist/implementations/socket.io/clients/quizjs-player.js'
         },
         options: {
           preserveComments: 'some'
@@ -79,5 +80,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('default', ['jshint', 'mochacli', 'browserify', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'mochacli', 'clean', 'browserify', 'uglify']);
+  grunt.registerTask('dev', ['jshint', 'mochacli']);
 };

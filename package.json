@@ -1,22 +1,24 @@
 {
-  "name": "quizjs-server",
-  "version": "0.0.0",
-  "description": "A node-based platform for live quiz shows",
+  "name": "quizjs",
+  "version": "0.1.0",
+  "description": "A web-based platform for live quiz shows",
   "author": {
     "name": "Alberto Congiu",
     "email": "4lbertoc@gmail.com",
-    "url": "albertocongiu.com"
+    "url": "http://albertocongiu.com"
   },
-  "repository": "4lbertoC/quizjs-server",
   "license": "MIT",
   "files": [
-    "index.js",
-    "cli.js"
+    "index.js"
   ],
   "keywords": [
-    "quizjs-server",
+    "quiz",
     "quizjs"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/4lbertoC/quizjs.git"
+  },
   "dependencies": {
     "express": "^4.11.2",
     "socket.io": "^1.3.4",
@@ -25,18 +27,18 @@
   "devDependencies": {
     "grunt-browserify": "^3.4.0",
     "grunt-cli": "^0.1.13",
-    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jshint": "^0.11.0",
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-uglify": "^0.8.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-cli": "^1.11.0",
     "jshint-stylish": "^1.0.0",
-    "load-grunt-tasks": "^1.0.0",
+    "load-grunt-tasks": "^3.1.0",
     "time-grunt": "^1.0.0"
   },
   "scripts": {
     "build": "npm install && grunt",
     "test": "grunt"
-  },
-  "private": true
+  }
 }

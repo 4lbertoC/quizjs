@@ -5,7 +5,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-var QuizJsServer = require('../');
+var QuizJsServer = require('../../');
 
 var qjs = new QuizJsServer();
 

@@ -1,7 +1,7 @@
 module.exports = {
 
 	/*
-	 * Actions sent by players and master.
+	 * Actions sent by players and master to the server.
 	 */
 	ACTION: {
 		MASTER: {
@@ -21,7 +21,7 @@ module.exports = {
 	},
 
 	/**
-	 * Events sent by the server.
+	 * Events sent by server and client to their listeners.
 	 */
 	EVENT: {
 		MASTER: {
@@ -33,7 +33,9 @@ module.exports = {
 			REGISTER: 'quizjs-player-register'
 		},
 		STATE: {
+			// Triggered when the state is reset
 			RESET: 'quizjs-state-reset',
+			// Triggered when the state is updated
 			UPDATE: 'quizjs-state-update'
 		}
 	}
