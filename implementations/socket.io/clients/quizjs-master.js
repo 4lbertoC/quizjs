@@ -4,9 +4,6 @@ var events = require('events');
 
 /**
  * @constructor
- * @fires QuizJsMaster#EVENT.PLAYER.REGISTER
- * @fires QuizJsMaster#EVENT.STATE.UPDATE
- * @fires QuizJsMaster#EVENT.STATE.RESET
  */
 var QuizJsMaster = function() {
 	this._emitter = new events.EventEmitter();
@@ -16,6 +13,7 @@ var QuizJsMaster = function() {
  * Connects to the socket.io server.
  *
  * @param {string} url The address to connect to
+ * @fires QuizJsMaster#EVENT.MASTER.REGISTER
  */
 QuizJsMaster.prototype.connect = function(url) {
 	var self = this;
@@ -41,6 +39,8 @@ QuizJsMaster.prototype.connect = function(url) {
 
 /**
  * Passes the turn to the next subscriber in the queue.
+ *
+ * @fires QuizJsMaster#EVENT.STATE.UPDATE
  */
 QuizJsMaster.prototype.next = function() {
 	if (this._connected) {
@@ -52,6 +52,8 @@ QuizJsMaster.prototype.next = function() {
 
 /**
  * Resets the quiz state.
+ *
+ * @fires QuizJsMaster#EVENT.STATE.RESET
  */
 QuizJsMaster.prototype.reset = function() {
 	if (this._connected) {
