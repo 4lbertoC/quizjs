@@ -6,7 +6,7 @@ A web-based platform for live quizzes.
 
 It consists of a __master__ client, one or more __player__ clients and a __server__ to handle the communication between them.
 
-# Game Mechanics
+## Game Mechanics
 
 - The master resets the game state and asks a question.
 - The players who want to answer subscribe to the question (like if they pressed a _buzzer button_).
