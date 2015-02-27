@@ -3,7 +3,7 @@
 var assert = require('assert');
 var QuizJsServer = require('../');
 
-describe('quizjs-server node module', function() {
+describe('QuizJsServer', function() {
 
     describe('.registerPlayer()', function() {
 
@@ -14,7 +14,7 @@ describe('quizjs-server node module', function() {
             assert(typeof playerId !== 'undefined');
         });
 
-        it('emits an event to its listeners', function() {
+        it('emits a QuizJsServer#EVENT.PLAYER.REGISTER event to its listeners', function() {
             var qjs = new QuizJsServer();
             var playerId;
             var eventPlayerId;
@@ -26,7 +26,7 @@ describe('quizjs-server node module', function() {
             });
 
             playerId = qjs.registerPlayer();
-            assert(isCallbackCalled, 'The player registration callback has not been called');
+            assert(isCallbackCalled, 'The QuizJsServer#EVENT.PLAYER.REGISTER callback has not been called');
             assert(eventPlayerId === playerId, 'The registered player\'s id is not included in the event data');
         });
 
@@ -47,7 +47,7 @@ describe('quizjs-server node module', function() {
             assert(speakerId === player, 'The subscribed player is not registered');
         });
 
-        it('emits a state update event', function() {
+        it('emits a QuizJsServer#EVENT.STATE.UPDATE event', function() {
             var qjs = new QuizJsServer();
             var player = qjs.registerPlayer();
             var isCallbackCalled = false;
@@ -57,7 +57,7 @@ describe('quizjs-server node module', function() {
             });
 
             qjs.subscribe(player);
-            assert(isCallbackCalled, 'The state update callback has not been called');
+            assert(isCallbackCalled, 'The QuizJsServer#EVENT.STATE.UPDATE callback has not been called');
         });
 
     });
@@ -94,7 +94,7 @@ describe('quizjs-server node module', function() {
             assert(typeof speakerId === 'undefined', 'Is not returning undefined if the queue is empty');
         });
 
-        it('emits a state update event', function() {
+        it('emits a QuizJsServer#EVENT.STATE.UPDATE event', function() {
             var qjs = new QuizJsServer();
             var isCallbackCalled = false;
 
@@ -104,7 +104,7 @@ describe('quizjs-server node module', function() {
 
             qjs.nextSubscriber();
 
-            assert(isCallbackCalled, 'The state update callback has not been called');
+            assert(isCallbackCalled, 'The QuizJsServer#EVENT.STATE.UPDATE callback has not been called');
         });
 
     });
@@ -128,7 +128,7 @@ describe('quizjs-server node module', function() {
             assert(typeof speakerId === 'undefined', 'The speaker id should be undefined after a reset');
         });
 
-        it('emits a state reset event', function() {
+        it('emits a QuizJsServer#EVENT.STATE.RESET event', function() {
             var qjs = new QuizJsServer();
             var isCallbackCalled = false;
 
@@ -138,7 +138,7 @@ describe('quizjs-server node module', function() {
 
             qjs.resetState();
 
-            assert(isCallbackCalled, 'The state reset callback has not been called');
+            assert(isCallbackCalled, 'The QuizJsServer#EVENT.STATE.RESET callback has not been called');
         });
 
     });
