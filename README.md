@@ -27,7 +27,7 @@ The package contains a basic socket.io server that can be run with:
 $ node implementations/socket.io/quizjs-socket.io.js
 ```
 
-The socket.io player and master clients are built into the `dist` directory by running the following code in the command line:
+The socket.io player and master clients are built into the `dist` directory by simply running:
 
 ```sh
 $ grunt
