@@ -6,12 +6,12 @@ A web-based platform for live quizzes.
 
 It consists of a __master__ client, one or more __player__ clients and a __server__ to handle the communication between them.
 
-Each player is like a _buzzer button_ that when pressed subscribes the player to a question asked by the master.
+# Game Mechanics
 
-The first player to subscribe can answer immediately, while the other players are added to a queue.
-
-If the answer of the first player is wrong, the turn moves to the next client in the queue. This mechanism goes on until either the answer is right or the queue is emptied.
-
+- The master resets the game state and asks a question.
+- The players who want to answer subscribe to the question (like if they pressed a _buzzer button_).
+- The first player who subscribes can give the answer, while the other players are added to a queue.
+- If the answer is wrong, the master skips to the next player in the queue until either the answer is right or the queue is empty.
 
 ## Install
 
